@@ -1,20 +1,32 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { GameEngine } from 'react-native-game-engine';
+import Player, { playerSystem } from './components/Player';
+import Background, { backgroundSystem } from './components/Background';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default function App()
+{
+    return (
+        <GameEngine
+            style={{ flex: 1 }}
+            systems={[playerSystem, backgroundSystem]}
+            entities=
+            {{
+                background:
+                {
+                    x: 0,
+                    scrollSpeed: 1,
+                    renderer: Background,
+                },
+                player:
+                {
+                    x: 100,
+                    y: 100,
+                    scrollSpeed: 16,
+                    scrollFrame: 0,
+                    currentFrame: 0,
+                    renderer: Player,
+                },
+            }}
+        >
+        </GameEngine>
+    );
+};
