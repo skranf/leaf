@@ -1,8 +1,9 @@
+import { useEffect, useState } from 'react';
 import { GameEngine } from 'react-native-game-engine';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import Player, { playerSystem } from './components/Player';
 import Background, { backgroundSystem } from './components/Background';
-import { useEffect } from 'react';
+import Drawings, { drawingsSystem } from './components/Drawings';
 
 async function changeScreenOrientation()
 {
@@ -13,11 +14,10 @@ async function changeScreenOrientation()
 export default function App()
 {
     useEffect(() => { changeScreenOrientation()}, []);
-
     return (
         <GameEngine
             style={{ flex: 1 }}
-            systems={[playerSystem, backgroundSystem]}
+            systems={[playerSystem, backgroundSystem, drawingsSystem]}
             entities=
             {{
                 background:
@@ -35,8 +35,13 @@ export default function App()
                     currentFrame: 0,
                     renderer: Player,
                 },
+                drawings:
+                {
+                    paths: [],
+                    renderer: Drawings,
+                }
             }}
-        >
+        >   
         </GameEngine>
     );
 };
