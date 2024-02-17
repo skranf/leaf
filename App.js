@@ -3,7 +3,7 @@ import { GameEngine } from 'react-native-game-engine';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import Player, { playerSystem } from './components/Player';
 import Background, { backgroundSystem } from './components/Background';
-import Drawings, { drawingsSystem } from './components/Drawings';
+import Drawings, { drawingsSystem, scrollDrawingsSystem } from './components/Drawings';
 
 async function changeScreenOrientation()
 {
@@ -17,7 +17,7 @@ export default function App()
     return (
         <GameEngine
             style={{ flex: 1 }}
-            systems={[playerSystem, backgroundSystem, drawingsSystem]}
+            systems={[playerSystem, backgroundSystem, drawingsSystem, scrollDrawingsSystem]}
             entities=
             {{
                 background:
@@ -38,6 +38,8 @@ export default function App()
                 drawings:
                 {
                     paths: [],
+                    translates: [],
+                    test: [0],
                     renderer: Drawings,
                 }
             }}
