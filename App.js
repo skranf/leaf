@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { GameEngine } from 'react-native-game-engine';
 import * as ScreenOrientation from 'expo-screen-orientation';
-import Player, { playerSystem } from './components/Player';
+import Player, { PLAYER_POS_Y, playerSystem } from './components/Player';
 import Background, { backgroundSystem } from './components/Background';
 import Drawings, { drawingsSystem, scrollDrawingsSystem } from './components/Drawings';
 
@@ -29,7 +29,7 @@ export default function App()
                 player:
                 {
                     x: 80,
-                    y: 50,
+                    y: PLAYER_POS_Y,
                     scrollSpeed: 16,
                     scrollFrame: 0,
                     currentFrame: 0,
@@ -39,7 +39,7 @@ export default function App()
                 {
                     paths: [],
                     translates: [],
-                    test: [0],
+                    coordonates: [],
                     renderer: Drawings,
                 }
             }}
