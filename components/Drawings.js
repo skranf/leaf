@@ -1,21 +1,22 @@
 import { Dimensions } from 'react-native';
 import { Canvas, Path, Skia } from "@shopify/react-native-skia";
 
-let path;
+let path, lastPos, vectors;
 
 function getCoordinates(path)
 {
     const pathFromX = parseInt(path.toSVGString().split('M')[1].split(' ')[0]);
     const pathFromY = parseInt(path.toSVGString().split(' ')[1].split('L')[0]);
-    const pathToX = parseInt(path.toSVGString().split('L')[1].split(' ')[0]);
-    const pathToY = parseInt(path.toSVGString().split(' ')[2]);
+    const pathTo = path.toSVGString().split('L').pop().split(' ');
+    const pathToX = parseInt(pathTo[0]);
+    const pathToY = parseInt(pathTo[1]);
     // Drawing left to right
     if (pathFromX < pathToX) return {
         fromX: pathFromX,
         fromY: pathFromY,
         toX: pathToX,
         toY: pathToY,
-        coef: (pathFromY - pathToY) / (pathToX - pathFromX)
+        coef: (pathToY - pathFromY) / (pathToX - pathFromX)
     }
     // Drawing right to left
     else return {
@@ -23,7 +24,7 @@ function getCoordinates(path)
         fromY: pathToY,
         toX: pathFromX,
         toY: pathFromY,
-        coef: (pathToY - pathFromY) / (pathFromX - pathToX)
+        coef: (pathFromY - pathToY) / (pathFromX - pathToX)
     }
 }
 
@@ -32,15 +33,23 @@ export function drawingsSystem(entities, { touches })
     const drawingsEntities = entities.drawings;
     touches.filter(t => t.type === "start").forEach(t => {
         path = Skia.Path.Make();
-        path.moveTo(Math.round(t.event.pageX), Math.round(t.event.pageY));
+        path.moveTo(t.event.pageX, t.event.pageY);
+        lastPos = {x: t.event.pageX, y: t.event.pageY};
+        vectors = [];
+    });
+    touches.filter(t => t.type === "move").forEach(t => {
+        const nextPos = {x: lastPos.x + t.delta.pageX, y: lastPos.y + t.delta.pageY};
+        path.lineTo(nextPos.x, nextPos.y);
+        vectors.push({x: Math.round(lastPos.x), v : Math.round(t.delta.pageY/t.delta.pageX)});
+        lastPos = nextPos;
     });
     touches.filter(t => t.type === "end").forEach(t => {
-        path.lineTo(Math.round(t.event.pageX), Math.round(t.event.pageY));
+        path.lineTo(t.event.pageX, t.event.pageY);
         drawingsEntities.paths.push(path);
         drawingsEntities.translates.push(0);
-        drawingsEntities.coordonates.push(getCoordinates(path));
-        //console.log(path.toSVGString());
-        //console.log(getCoordinates(path));
+        drawingsEntities.vectors.push(vectors);
+        drawingsEntities.coordinates.push(getCoordinates(path));
+        console.log(getCoordinates(path));
     });
     return entities;
 };
@@ -57,7 +66,7 @@ export function scrollDrawingsSystem(entities)
     {
         drawingsEntities.paths.shift();
         drawingsEntities.translates.shift();
-        drawingsEntities.coordonates.shift();
+        drawingsEntities.coordinates.shift();
     }
     //console.log(translates);
     return entities;

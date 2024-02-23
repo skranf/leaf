@@ -13,11 +13,23 @@ async function changeScreenOrientation()
 
 export default function App()
 {
+    const [isGameRunning, setIsGameRunning] = useState(true);
     useEffect(() => { changeScreenOrientation()}, []);
     return (
         <GameEngine
             style={{ flex: 1 }}
             systems={[playerSystem, backgroundSystem, drawingsSystem, scrollDrawingsSystem]}
+            running={isGameRunning}
+            onEvent={(e) =>
+            {
+                switch(e)
+                {
+                  case "game-over":
+                    alert("Game over!");
+                    setIsGameRunning(false);
+                    return;
+                }
+            }}
             entities=
             {{
                 background:
@@ -39,7 +51,8 @@ export default function App()
                 {
                     paths: [],
                     translates: [],
-                    coordonates: [],
+                    vectors: [],
+                    coordinates: [],
                     renderer: Drawings,
                 }
             }}
